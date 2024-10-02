@@ -1,0 +1,25 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Godot-specific ignores
+*.import
+export_presets.cfg
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+# Mono-specific ignores
+.mono/
+mono_crash.*.json
+
+# Editors
+.vscode/*
+.editorconfig
+.idea/
+.DS_Store
+
+# Only add pindot plugin 
+/addons/*
+!/addons/pindot
+
+# Place project files here
