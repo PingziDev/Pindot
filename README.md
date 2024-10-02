@@ -1,6 +1,8 @@
 # Pindot
+> Pin your Dot : 锁定重点！
 
-> Pin your Dot : 锁定你的重点！
+![GitHub Release](https://img.shields.io/github/v/release/PingziDev/Pindot)	![GitHub License](https://img.shields.io/github/license/PingziDev/Pindot)	![GitHub contributors](https://img.shields.io/github/contributors/PingziDev/Pindot)	![GitHub last commit](https://img.shields.io/github/last-commit/PingziDev/Pindot)	![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/PingziDev/Pindot/total)	
+
 
 欢迎来到 **Pindot**，一个 **轻量、易上手、可插拔组件化、持续维护、中文友好** 的游戏开发框架！基于 **Godot 4**，为开发者提供通用解决方案，帮助你跳过基础的繁琐功能，专注于游戏开发的核心！
 
