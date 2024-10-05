@@ -12,12 +12,12 @@ config_version=5
 
 config/name="Pindot"
 run/main_scene="res://test_scenes/test.tscn"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/pindot/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/pindot/plugin.cfg", "res://addons/quick_layout_changer/plugin.cfg")
 
 [rendering]
 
