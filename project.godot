@@ -8,18 +8,42 @@
 
 config_version=5
 
+[Pindot]
+
+log_level=1
+
 [application]
 
 config/name="Pindot"
 run/main_scene="res://test_scenes/test.tscn"
-config/features=PackedStringArray("4.4", "GL Compatibility")
+config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Pindot="*res://addons/pindot/pindot.gd"
+
+[category]
+
+property_name=0
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/initial_position_type=0
+window/size/initial_position=Vector2i(-500, 0)
+window/size/borderless=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/pindot/plugin.cfg", "res://addons/quick_layout_changer/plugin.cfg")
+enabled=PackedStringArray("res://addons/pindot/plugin.cfg")
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[your_plugin]
+
+example_option=true

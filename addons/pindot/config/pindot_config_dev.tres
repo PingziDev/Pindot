@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="PindotConfig" load_steps=2 format=3 uid="uid://ccuy176880s2c"]
+
+[ext_resource type="Script" path="res://addons/pindot/config/pindot_config.gd" id="1_swcg6"]
+
+[resource]
+script = ExtResource("1_swcg6")
+log_level = 0
