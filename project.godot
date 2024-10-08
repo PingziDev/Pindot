@@ -11,6 +11,8 @@ config_version=5
 [Pindot]
 
 log_level=1
+config_file="res://addons/pindot/config/pindot_config_dev.tres"
+test="defaultavlaue"
 
 [application]
 
@@ -36,6 +38,11 @@ window/size/borderless=true
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/pindot/plugin.cfg")
+
+[pindot]
+
+test="defaultavlaue"
+config_file="res://addons/pindot/config/pindot_config_dev.tres"
 
 [rendering]
 

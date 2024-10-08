@@ -1,7 +1,7 @@
 extends Node2D
 
-@onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
-@onready var audio_stream_player_2: AudioStreamPlayer = $AudioStreamPlayer2
+@onready var audio_stream_player: PindotSoundPlayer = $AudioStreamPlayer
+@onready var audio_stream_player_2: PindotSoundPlayer = $AudioStreamPlayer2
 
 
 func _ready() -> void:
@@ -9,8 +9,8 @@ func _ready() -> void:
 
 
 func _on_bgm_1_pressed():
-	Pindot.sound.set_active(audio_stream_player)
+	Pindot.sound.set_active(audio_stream_player.id)
 
 
 func _on_bgm_2_pressed():
-	Pindot.sound.set_active(audio_stream_player_2)
+	Pindot.sound.set_active(audio_stream_player_2.id)

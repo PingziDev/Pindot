@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cigw4srrbbhea"]
+[gd_scene load_steps=5 format=3 uid="uid://cigw4srrbbhea"]
 
 [ext_resource type="Script" path="res://test_scenes/test_sound/test_sound.gd" id="1_phds1"]
 [ext_resource type="AudioStream" uid="uid://bfyrs71rb0pl0" path="res://test_scenes/test_sound/柔情-AI.mp3" id="2_qrx7q"]
 [ext_resource type="AudioStream" uid="uid://b4cex2t0ipnhy" path="res://test_scenes/test_sound/轻快-AI.mp3" id="3_7yggl"]
+[ext_resource type="Script" path="res://addons/pindot/sound/pindot_sound_player.gd" id="3_wpibo"]
 
 [node name="TestSound" type="Node2D"]
 script = ExtResource("1_phds1")
@@ -10,10 +11,14 @@ script = ExtResource("1_phds1")
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_qrx7q")
 volume_db = -9.37
+script = ExtResource("3_wpibo")
+id = "AudioStreamPlayer"
 
 [node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_7yggl")
 volume_db = -5.62
+script = ExtResource("3_wpibo")
+id = "AudioStreamPlayer2"
 
 [node name="bgm1" type="Button" parent="."]
 offset_left = 489.0
