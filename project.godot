@@ -29,10 +29,8 @@ property_name=0
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
 window/size/initial_position_type=0
-window/size/initial_position=Vector2i(-500, 0)
+window/size/initial_position=Vector2i(-2000, 0)
 window/size/borderless=true
 
 [editor_plugins]

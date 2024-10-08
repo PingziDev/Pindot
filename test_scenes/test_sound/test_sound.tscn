@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://cigw4srrbbhea"]
+
+[ext_resource type="Script" path="res://test_scenes/test_sound/test_sound.gd" id="1_phds1"]
+[ext_resource type="AudioStream" uid="uid://bfyrs71rb0pl0" path="res://test_scenes/test_sound/柔情-AI.mp3" id="2_qrx7q"]
+[ext_resource type="AudioStream" uid="uid://b4cex2t0ipnhy" path="res://test_scenes/test_sound/轻快-AI.mp3" id="3_7yggl"]
+
+[node name="TestSound" type="Node2D"]
+script = ExtResource("1_phds1")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_qrx7q")
+volume_db = -9.37
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_7yggl")
+volume_db = -5.62
+
+[node name="bgm1" type="Button" parent="."]
+offset_left = 489.0
+offset_top = 258.0
+offset_right = 541.0
+offset_bottom = 289.0
+text = "Bgm1"
+
+[node name="bgm2" type="Button" parent="."]
+offset_left = 568.0
+offset_top = 258.0
+offset_right = 620.0
+offset_bottom = 289.0
+text = "Bgm2"
+
+[connection signal="pressed" from="bgm1" to="." method="_on_bgm_1_pressed"]
+[connection signal="pressed" from="bgm2" to="." method="_on_bgm_2_pressed"]
