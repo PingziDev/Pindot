@@ -30,7 +30,7 @@ const LOG_CATEGORY_ALL = "*"
 
 # stack忽略的内容, 每行格式{source，function},会寻找并过滤
 @export var stack_ignore_filters := [
-	{source = "logger", function = ""},
+	{source = "pindot", function = ""},
 ]
 ## 调试信息调用栈显示行数
 @export var debug_stack_size := 6
@@ -41,6 +41,7 @@ const LOG_CATEGORY_ALL = "*"
 @export var is_profiling := false
 
 ## 配置信息,从全局读取
+var show_debug_info: bool = false
 var show_level: LogLevel = LogLevel.DEBUG
 var show_category: Array[String] = [LOG_CATEGORY_ALL]
 var template_handler: LogTemplateHandler
@@ -63,6 +64,7 @@ var profiler_data: Array[String]
 
 func _ready():
 	# 读取配置数据
+	show_debug_info = Pindot.config.log_debug
 	show_level = Pindot.config.log_level
 	show_category = Pindot.config.log_category
 	template_handler = load(Pindot.config.log_template_handler).new()
@@ -74,20 +76,21 @@ func _ready():
 	if output_handler == null:
 		printerr("[Pindot] log_output_handler 配置不正确,需要为继承 LogOutputHandler 的类")
 
-	if Pindot.config.log_debug:
-		prints(
-			"-----[Pindot] logger ready:",
-			"show_level:" + LogLevel.keys()[show_level],
-			"show_category:" + ",".join(show_category),
-			"-----"
-		)
-
 	# 获取环境信息
 	# 当运行参数中包含 pindot_log_pure 时，只输出纯净的日志
 	is_log_pure = "pindot_log_pure" in OS.get_cmdline_args()
 	if is_log_pure:
 		template_handler_pure = LogTemplateHandler.new()
 		output_handler_pure = LogOutputHandler.new()
+
+	if show_debug_info:
+		prints(
+			"-----[Pindot] logger ready:",
+			"show_level:" + LogLevel.keys()[show_level],
+			"show_category:" + ",".join(show_category),
+			"is_log_pure:" + str(is_log_pure),
+			"-----"
+		)
 
 
 #region 日志快捷指令

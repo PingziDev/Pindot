@@ -4,11 +4,11 @@ extends Node
 ## 框架配置
 var config: PindotConfig
 
-## 声音管理器
-var sound: PindotSound
-
 ## 日志输出
 var log: PindotLog
+
+## 声音管理器
+var sound: PindotSound
 
 
 func _enter_tree() -> void:
@@ -21,9 +21,9 @@ func _ready() -> void:
 		printerr("Pindot 未正确加载,尝试重新启动项目和插件")
 
 	config = load(ProjectSettings.get_setting("pindot/config_file"))
+	
+	log = PindotLog.new()
+	add_child(log)
 
 	sound = PindotSound.new()
 	add_child(sound)
-
-	log = PindotLog.new()
-	add_child(log)

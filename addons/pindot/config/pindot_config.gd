@@ -4,7 +4,11 @@
 class_name PindotConfig
 extends Resource
 
-@export_category("日志")
+@export_category("音效管理")
+## 显示调试信息
+@export var sound_debug: bool = false
+
+@export_category("日志管理")
 ## 显示调试信息
 @export var log_debug: bool = false
 ## 日志输出级别, 见 PindotLogLevel

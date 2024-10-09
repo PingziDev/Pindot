@@ -5,8 +5,10 @@
 class_name PindotSound
 extends Node
 
+@export var show_debug_info: bool = false
+
 # BGM 默认淡入淡出的持续时间
-@export var default_fade_duration: float = 2.0
+@export var default_fade_duration: float = 0.5
 
 var fade_out_tween: Tween
 var fade_in_tween: Tween
@@ -17,10 +19,17 @@ var curr_player: PindotSoundPlayer
 var players_dict: Dictionary  # {id: PindotSoundPlayer}
 
 
+func _ready() -> void:
+	# 读取配置数据
+	show_debug_info = Pindot.config.sound_debug
+	Pindot.log.info("show_debug_info ====", show_debug_info)  #LOG
+
+
 ## 注册播放器
 func register_player(player: PindotSoundPlayer) -> void:
 	players_dict[player.id] = player
-	player.reparent(self)
+	# 将player移动到管理器下统一处理 TODO
+	# player.reparent.call_deferred(self)
 
 
 ## 取消注册
@@ -31,13 +40,20 @@ func unregister_player(player: PindotSoundPlayer) -> void:
 ## 获取播放器
 func get_player(id: String) -> PindotSoundPlayer:
 	if !players_dict.has(id):
-		printerr("player %s not found" % id)
+		Pindot.log.error("player %s not found" % id)
+		return null
 	return players_dict[id]
 
 
 ## 设置当前bgm播放器
 ## 同时只会有激活1个bgm播放器
 func set_active(player_id: String, duration: float = default_fade_duration):
+	if show_debug_info:
+		Pindot.log.debug(
+			"sound changed ===",
+			"old:" + (curr_player.id if curr_player else "null") + "	new:" + player_id
+		)
+
 	if curr_player:
 		if curr_player.id == player_id:
 			return
@@ -47,10 +63,10 @@ func set_active(player_id: String, duration: float = default_fade_duration):
 
 	# 设置新的播放器
 	curr_player = get_player(player_id)
-	print(player_id)
 
-	# 淡入新的播放器
-	fade_in(curr_player, duration)
+	if curr_player:
+		# 淡入新的播放器
+		fade_in(curr_player, duration)
 
 
 ## 淡出声音

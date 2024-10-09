@@ -32,7 +32,7 @@ property_name=0
 [display]
 
 window/size/initial_position_type=0
-window/size/initial_position=Vector2i(-2000, 0)
+window/size/initial_position=Vector2i(2000, 0)
 window/size/borderless=true
 
 [editor_plugins]
@@ -42,7 +42,7 @@ enabled=PackedStringArray("res://addons/pindot/plugin.cfg")
 [pindot]
 
 test="defaultavlaue"
-config_file="res://addons/pindot/config/pindot_config_dev.tres"
+config_file="res://pindot_config.tres"
 
 [rendering]
 
