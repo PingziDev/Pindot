@@ -91,6 +91,8 @@ func _exit_tree() -> void:
 ## 添加project_setting属性
 func _add_project_setting(propertyinfo: Dictionary) -> void:
 	ProjectSettings.set_setting(propertyinfo.name, propertyinfo.default_value)
+	# TODO 这里set_initial_value会导致运行时读取不到ProjectSetting?
+	# ProjectSettings.set_initial_value(propertyinfo.name, propertyinfo.default_value)
 	ProjectSettings.add_property_info(propertyinfo)
 	ProjectSettings.set_as_basic(propertyinfo.name, true)
 	ProjectSettings.save()
