@@ -40,3 +40,14 @@ func get_message(
 			}
 		)
 	)
+
+
+## 获取调用栈信息
+func get_stack_message(source: String, line: int, function: String) -> String:
+	return (
+		(
+			"\t\t[code][color={sourcecolor}]{source}:{line}[/color] "
+			+ "[color={functioncolor}]{function}[/color][/code]"
+		)
+		. format({source = source, line = str(line), function = function})
+	)

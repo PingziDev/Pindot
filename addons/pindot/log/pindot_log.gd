@@ -26,6 +26,14 @@ const LOG_LEVEL_FATAL = 4
 ## 表示所有分类,会显示全部分类的日志
 const LOG_CATEGORY_ALL = "*"
 
+# stack忽略的内容, 每行格式{source，function},会寻找并过滤
+@export var stack_ignore_filters := [
+	{source = "logger", function = ""},
+]
+## 调试信息调用栈显示行数
+@export var debug_stack_size := 6
+@export var info_stack_size := 1
+
 ## 配置信息,从全局读取
 var show_level: LogLevel = LogLevel.DEBUG
 var show_category: Array[String] = [LOG_CATEGORY_ALL]
@@ -38,6 +46,11 @@ var is_log_pure := false
 ## 纯粹的日志处理器,不带任何多余信息
 var template_handler_pure: LogTemplateHandler
 var output_handler_pure: LogOutputHandler
+
+## 是否是编辑器,编辑器会显示调用栈
+var is_editor:
+	get:
+		return OS.has_feature("editor")
 
 
 func _ready():
@@ -79,12 +92,21 @@ func debug(name: String, data: String = "", category: String = LOG_CATEGORY_ALL)
 	var msg = _get_message(name, data, category, LogLevel.DEBUG)
 	_output_message(msg)
 
+	if is_editor:
+		var stack_msg = _get_stack(debug_stack_size)
+		_output_message(stack_msg)
+
 
 ## 打印信息日志
 func info(name: String, data: String = "", category: String = LOG_CATEGORY_ALL) -> void:
 	if show_level > LogLevel.INFO or !_is_category_show(category):
 		return
 	var msg = _get_message(name, data, category, LogLevel.INFO)
+
+	if is_editor:
+		var stack_msg = _get_stack(info_stack_size)
+		msg += "\t" + stack_msg
+
 	_output_message(msg)
 
 
@@ -94,6 +116,11 @@ func warn(name: String, data: String = "", category: String = LOG_CATEGORY_ALL) 
 		return
 	var msg = _get_message(name, data, category, LogLevel.WARNING)
 	_output_message(msg)
+
+	if is_editor:
+		var stack_msg = _get_stack(debug_stack_size)
+		_output_message(stack_msg)
+
 	# TODO 带颜色信息的日志推送到引擎显示问题
 	# push_warning(template_handler_pure.get_message(name, data, category, LogLevel.WARNING))
 	push_warning(msg)
@@ -106,6 +133,10 @@ func error(name: String, data: String = "", category: String = LOG_CATEGORY_ALL)
 	var msg = _get_message(name, data, category, LogLevel.ERROR)
 	_output_message(msg)
 
+	if is_editor:
+		var stack_msg = _get_stack(debug_stack_size)
+		_output_message(stack_msg)
+
 	push_error(msg)
 
 
@@ -115,6 +146,10 @@ func fatal(name: String, data: String = "", category: String = LOG_CATEGORY_ALL)
 		return
 	var msg = _get_message(name, data, category, LogLevel.FATAL)
 	_output_message(msg)
+
+	if is_editor:
+		var stack_msg = _get_stack(debug_stack_size)
+		_output_message(stack_msg)
 
 	push_error(msg)
 
@@ -142,3 +177,43 @@ func _output_message(msg: String) -> void:
 		output_handler_pure.log(msg)
 	else:
 		output_handler.log(msg)
+
+
+## 获取调用栈
+func _get_stack(stack_size: int) -> String:
+	var stack = get_stack()
+	var stack_trace_message = ""
+	var got_stack_count = 0
+
+	if !stack.is_empty():  # 检查栈是否为空
+		for entry in stack:  # 直接遍历栈，避免使用索引
+			var infilter = stack_ignore_filters.any(
+				func(filter): return (
+					entry.source.contains(filter.source)
+					and (!filter.function or entry.function.contains(filter.function))
+				)
+			)
+			if infilter:
+				continue
+
+			stack_trace_message += _get_stack_message(entry.source, entry.line, entry.function)
+
+			got_stack_count += 1
+			stack_trace_message += "\n"
+
+			if got_stack_count >= stack_size:  # 达到限制后停止
+				break
+	else:
+		stack_trace_message = (
+			"No stack trace available, please run from within the editor "
+			+ "or connect to a remote debug context."
+		)
+
+	return stack_trace_message
+
+
+## 获取调用栈信息
+func _get_stack_message(source: String, line: int, function: String) -> String:
+	if is_log_pure:
+		return template_handler_pure.get_stack_message(source, line, function)
+	return template_handler.get_stack_message(source, line, function)

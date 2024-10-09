@@ -12,3 +12,10 @@ func get_message(
 	return "[{category}][{level}] {name} === {data}".format(
 		{category = category, level = PindotLog.LogLevel.keys()[level], name = name, data = data}
 	)
+
+
+## 获取调用栈信息
+func get_stack_message(source: String, line: int, function: String) -> String:
+	return "\t{source}:{line} {function}".format(
+		{source = source, line = str(line), function = function}
+	)
