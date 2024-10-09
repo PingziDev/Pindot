@@ -9,7 +9,7 @@ func get_message(
 	category: String = PindotLog.LOG_CATEGORY_ALL,
 	level: PindotLog.LogLevel = PindotLog.LogLevel.INFO
 ) -> String:
-	return "[{category}][{level}] {name} === {data}".format(
+	return "[{category}][{level}] {name} {data}".format(
 		{category = category, level = PindotLog.LogLevel.keys()[level], name = name, data = data}
 	)
 

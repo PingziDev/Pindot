@@ -7,6 +7,7 @@ extends Node
 #region 日志级别配置项
 
 enum LogLevel {
+	PROFILER = LOG_LEVEL_PROFILER,  ## 分析
 	DEBUG = LOG_LEVEL_DEBUG,  ## 调试
 	INFO = LOG_LEVEL_INFO,  ## 信息
 	WARNING = LOG_LEVEL_WARNING,  ## 警告
@@ -15,11 +16,12 @@ enum LogLevel {
 }
 
 ## 游戏框架日志等级
-const LOG_LEVEL_DEBUG = 0
-const LOG_LEVEL_INFO = 1
-const LOG_LEVEL_WARNING = 2
-const LOG_LEVEL_ERROR = 3
-const LOG_LEVEL_FATAL = 4
+const LOG_LEVEL_PROFILER = 0
+const LOG_LEVEL_DEBUG = 1
+const LOG_LEVEL_INFO = 2
+const LOG_LEVEL_WARNING = 3
+const LOG_LEVEL_ERROR = 4
+const LOG_LEVEL_FATAL = 5
 
 #endregion
 
@@ -33,6 +35,10 @@ const LOG_CATEGORY_ALL = "*"
 ## 调试信息调用栈显示行数
 @export var debug_stack_size := 6
 @export var info_stack_size := 1
+
+## 分析配置
+@export var profiler_max := 200
+@export var is_profiling := false
 
 ## 配置信息,从全局读取
 var show_level: LogLevel = LogLevel.DEBUG
@@ -51,6 +57,8 @@ var output_handler_pure: LogOutputHandler
 var is_editor:
 	get:
 		return OS.has_feature("editor")
+
+var profiler_data: Array[String]
 
 
 func _ready():
@@ -86,7 +94,7 @@ func _ready():
 
 
 ## 打印调试日志
-func debug(name: String, data: String = "", category: String = LOG_CATEGORY_ALL) -> void:
+func debug(name: String, data: Variant = "", category: String = LOG_CATEGORY_ALL) -> void:
 	if show_level > LogLevel.DEBUG or !_is_category_show(category):
 		return
 	var msg = _get_message(name, data, category, LogLevel.DEBUG)
@@ -98,20 +106,20 @@ func debug(name: String, data: String = "", category: String = LOG_CATEGORY_ALL)
 
 
 ## 打印信息日志
-func info(name: String, data: String = "", category: String = LOG_CATEGORY_ALL) -> void:
+func info(name: String, data: Variant = "", category: String = LOG_CATEGORY_ALL) -> void:
 	if show_level > LogLevel.INFO or !_is_category_show(category):
 		return
 	var msg = _get_message(name, data, category, LogLevel.INFO)
 
 	if is_editor:
-		var stack_msg = _get_stack(info_stack_size)
+		var stack_msg = _get_stack(info_stack_size, false)
 		msg += "\t" + stack_msg
 
 	_output_message(msg)
 
 
 ## 打印警告日志
-func warn(name: String, data: String = "", category: String = LOG_CATEGORY_ALL) -> void:
+func warn(name: String, data: Variant = "", category: String = LOG_CATEGORY_ALL) -> void:
 	if show_level > LogLevel.WARNING or !_is_category_show(category):
 		return
 	var msg = _get_message(name, data, category, LogLevel.WARNING)
@@ -127,7 +135,7 @@ func warn(name: String, data: String = "", category: String = LOG_CATEGORY_ALL) 
 
 
 ## 打印错误日志
-func error(name: String, data: String = "", category: String = LOG_CATEGORY_ALL) -> void:
+func error(name: String, data: Variant = "", category: String = LOG_CATEGORY_ALL) -> void:
 	if show_level > LogLevel.ERROR or !_is_category_show(category):
 		return
 	var msg = _get_message(name, data, category, LogLevel.ERROR)
@@ -141,7 +149,7 @@ func error(name: String, data: String = "", category: String = LOG_CATEGORY_ALL)
 
 
 ## 打印致命日志
-func fatal(name: String, data: String = "", category: String = LOG_CATEGORY_ALL) -> void:
+func fatal(name: String, data: Variant = "", category: String = LOG_CATEGORY_ALL) -> void:
 	if show_level > LogLevel.FATAL or !_is_category_show(category):
 		return
 	var msg = _get_message(name, data, category, LogLevel.FATAL)
@@ -156,16 +164,62 @@ func fatal(name: String, data: String = "", category: String = LOG_CATEGORY_ALL)
 
 #endregion
 
+#region 整块日志分析
+
+
+## 标记分析开始
+func profiler_start(category: String) -> void:
+	if show_level > LogLevel.PROFILER or !_is_category_show(category):
+		return
+	profiler_data.clear()
+	is_profiling = true
+	_add_profiler_message(
+		"--------------profilter start-----------------[{category}]".format({category = category}),
+		"",
+		category
+	)
+
+
+## 记录分析日志
+func profiler(name: String, data: Variant, category: String = LOG_CATEGORY_ALL) -> void:
+	if show_level > LogLevel.PROFILER or !_is_category_show(category):
+		return
+	if is_profiling:
+		_add_profiler_message(name, data, category)
+		if profiler_data.size() >= profiler_max:
+			profiler_stop(category)
+
+
+## 标记分析结束
+func profiler_stop(category: String = LOG_CATEGORY_ALL) -> void:
+	if show_level > LogLevel.PROFILER or !_is_category_show(category):
+		return
+	is_profiling = false
+	_add_profiler_message(
+		"--------------profilter stop-----------------[{category}]".format({category = category}),
+		"",
+		category
+	)
+
+
+func _add_profiler_message(name, data, category):
+	var msg = _get_message(name, data, category, LogLevel.PROFILER)
+	profiler_data.append(msg)
+	_output_message(msg)
+
+
+#endregion
+
 
 ## 是否显示对应类别
-func _is_category_show(category: String):
+func _is_category_show(category: String) -> bool:
 	if show_category.has(LOG_CATEGORY_ALL):
 		return true
 	return show_category.has(category)
 
 
 ## 获取日志信息
-func _get_message(name: String, data: String, category: String, level: LogLevel) -> String:
+func _get_message(name: String, data: Variant, category: String, level: LogLevel) -> String:
 	if is_log_pure:
 		return template_handler_pure.get_message(name, data, category, level)
 	return template_handler.get_message(name, data, category, level)
@@ -179,8 +233,8 @@ func _output_message(msg: String) -> void:
 		output_handler.log(msg)
 
 
-## 获取调用栈
-func _get_stack(stack_size: int) -> String:
+## 获取调用栈,多行栈要换行
+func _get_stack(stack_size: int, stack_newline: bool = true) -> String:
 	var stack = get_stack()
 	var stack_trace_message = ""
 	var got_stack_count = 0
@@ -199,7 +253,8 @@ func _get_stack(stack_size: int) -> String:
 			stack_trace_message += _get_stack_message(entry.source, entry.line, entry.function)
 
 			got_stack_count += 1
-			stack_trace_message += "\n"
+			if stack_newline:
+				stack_trace_message += "\n"
 
 			if got_stack_count >= stack_size:  # 达到限制后停止
 				break

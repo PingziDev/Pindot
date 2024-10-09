@@ -11,7 +11,11 @@ func get_message(
 ) -> String:
 	var levelcolor = "white"
 	var datacolor = "white"
+	# 可选颜色 ['black', 'red', 'green', 'yellow', 'blue', 'magenta',
+	# 'pink', 'purple', 'cyan', 'white', 'orange', 'gray']
 	match level:
+		PindotLog.LogLevel.PROFILER:
+			levelcolor = "gray"
 		PindotLog.LogLevel.DEBUG:
 			levelcolor = "cyan"
 		PindotLog.LogLevel.INFO:
@@ -21,11 +25,10 @@ func get_message(
 		PindotLog.LogLevel.ERROR:
 			levelcolor = "pink"
 		PindotLog.LogLevel.FATAL:
-			levelcolor = "red"
+			levelcolor = "magenta"
 	return (
 		(
-			"[[color=gray]{category}[/color]]"
-			+ "[[color=gray]{level}[/color]] "
+			"[[color=gray]{category}][{level}[/color]] "
 			+ "[color={levelcolor}]{name}[/color] "
 			+ "[color={datacolor}]{data}[/color]"
 		)
