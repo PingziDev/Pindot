@@ -42,7 +42,7 @@ enabled=PackedStringArray("res://addons/pindot/plugin.cfg")
 [pindot]
 
 test="defaultavlaue"
-config_file="res://pindot_config.tres"
+config_file="res://addons/pindot/config/pindot_config_dev.tres"
 
 [rendering]
 

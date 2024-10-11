@@ -47,12 +47,14 @@ var show_category: Array[String] = [LOG_CATEGORY_ALL]
 var template_handler: LogTemplateHandler
 var output_handler: LogOutputHandler
 
-## 是否只输出纯净日志
-var is_log_pure := false
+## 在终端输出,而不是在引擎中输出
+var is_terminal := false
 
 ## 纯粹的日志处理器,不带任何多余信息
-var template_handler_pure: LogTemplateHandler
-var output_handler_pure: LogOutputHandler
+var terminal_template_handler: LogTemplateHandler
+var terminal_output_handler: LogOutputHandler
+## 命令行指定的handler
+var command_template_handler: LogTemplateHandler
 
 ## 是否是编辑器,编辑器会显示调用栈
 var is_editor:
@@ -77,18 +79,18 @@ func _ready():
 		printerr("[Pindot] log_output_handler 配置不正确,需要为继承 LogOutputHandler 的类")
 
 	# 获取环境信息
-	# 当运行参数中包含 pindot_log_pure 时，只输出纯净的日志
-	is_log_pure = "pindot_log_pure" in OS.get_cmdline_args()
-	if is_log_pure:
-		template_handler_pure = LogTemplateHandler.new()
-		output_handler_pure = LogOutputHandler.new()
+	# 当运行参数中包含 pindot_log_terminal 时，只输出纯净的日志
+	is_terminal = "pindot_log_terminal" in OS.get_cmdline_args()
+	if is_terminal:
+		terminal_template_handler = LogTemplateHandlerANSI.new()
+		terminal_output_handler = LogOutputHandler.new()
 
 	if show_debug_info:
 		prints(
 			"-----[Pindot] logger ready:",
 			"show_level:" + LogLevel.keys()[show_level],
 			"show_category:" + ",".join(show_category),
-			"is_log_pure:" + str(is_log_pure),
+			"is_terminal:" + str(is_terminal),
 			"-----"
 		)
 
@@ -133,8 +135,9 @@ func warn(name: String, data: Variant = "", category: String = LOG_CATEGORY_ALL)
 		_output_message(stack_msg)
 
 	# TODO 带颜色信息的日志推送到引擎显示问题
-	# push_warning(template_handler_pure.get_message(name, data, category, LogLevel.WARNING))
-	push_warning(msg)
+	# push_warning(terminal_template_handler.get_message(name, data, category, LogLevel.WARNING))
+	if !is_terminal:
+		push_warning(msg)
 
 
 ## 打印错误日志
@@ -148,7 +151,8 @@ func error(name: String, data: Variant = "", category: String = LOG_CATEGORY_ALL
 		var stack_msg = _get_stack(debug_stack_size)
 		_output_message(stack_msg)
 
-	push_error(msg)
+	if !is_terminal:
+		push_error(msg)
 
 
 ## 打印致命日志
@@ -162,7 +166,8 @@ func fatal(name: String, data: Variant = "", category: String = LOG_CATEGORY_ALL
 		var stack_msg = _get_stack(debug_stack_size)
 		_output_message(stack_msg)
 
-	push_error(msg)
+	if !is_terminal:
+		push_error(msg)
 
 
 #endregion
@@ -223,15 +228,15 @@ func _is_category_show(category: String) -> bool:
 
 ## 获取日志信息
 func _get_message(name: String, data: Variant, category: String, level: LogLevel) -> String:
-	if is_log_pure:
-		return template_handler_pure.get_message(name, data, category, level)
+	if is_terminal:
+		return terminal_template_handler.get_message(name, data, category, level)
 	return template_handler.get_message(name, data, category, level)
 
 
 ## 输出日志
 func _output_message(msg: String) -> void:
-	if is_log_pure:
-		output_handler_pure.log(msg)
+	if is_terminal:
+		terminal_output_handler.log(msg)
 	else:
 		output_handler.log(msg)
 
@@ -272,6 +277,6 @@ func _get_stack(stack_size: int, stack_newline: bool = true) -> String:
 
 ## 获取调用栈信息
 func _get_stack_message(source: String, line: int, function: String) -> String:
-	if is_log_pure:
-		return template_handler_pure.get_stack_message(source, line, function)
+	if is_terminal:
+		return terminal_template_handler.get_stack_message(source, line, function)
 	return template_handler.get_stack_message(source, line, function)

@@ -22,7 +22,6 @@ var players_dict: Dictionary  # {id: PindotSoundPlayer}
 func _ready() -> void:
 	# 读取配置数据
 	show_debug_info = Pindot.config.sound_debug
-	Pindot.log.info("show_debug_info ====", show_debug_info)  #LOG
 
 
 ## 注册播放器
@@ -51,10 +50,15 @@ func set_active(player_id: String, duration: float = default_fade_duration):
 	if show_debug_info:
 		Pindot.log.debug(
 			"sound changed ===",
-			"old:" + (curr_player.id if curr_player else "null") + "	new:" + player_id
+			(
+				"old:"
+				+ (curr_player.id if is_instance_valid(curr_player) else "null")
+				+ "	new:"
+				+ player_id
+			)
 		)
 
-	if curr_player:
+	if is_instance_valid(curr_player):
 		if curr_player.id == player_id:
 			return
 
