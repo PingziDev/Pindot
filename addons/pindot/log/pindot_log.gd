@@ -33,7 +33,7 @@ const LOG_CATEGORY_ALL = "*"
 	{source = "pindot", function = ""},
 ]
 ## 调试信息调用栈显示行数
-@export var debug_stack_size := 6
+@export var debug_stack_size := 3
 @export var info_stack_size := 1
 
 ## 分析配置
