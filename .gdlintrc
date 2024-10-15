@@ -1,0 +1,8 @@
+{
+    // 禁用最大行长度的检查
+    "max_line_length": null,
+    "rules": {
+        // 禁用未使用变量的检查
+        "no_unused_vars": "off"
+    }
+}
