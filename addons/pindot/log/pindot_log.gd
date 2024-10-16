@@ -182,7 +182,7 @@ func profiler_start(category: String) -> void:
 	profiler_data.clear()
 	is_profiling = true
 	_add_profiler_message(
-		"--------------profilter start-----------------[{category}]".format({category = category}),
+		"--------------{category} start-----------------".format({category = category}),
 		"",
 		category
 	)
@@ -204,9 +204,7 @@ func profiler_stop(category: String = LOG_CATEGORY_ALL) -> void:
 		return
 	is_profiling = false
 	_add_profiler_message(
-		"--------------profilter stop-----------------[{category}]".format({category = category}),
-		"",
-		category
+		"--------------{category} end-----------------".format({category = category}), "", category
 	)
 
 
